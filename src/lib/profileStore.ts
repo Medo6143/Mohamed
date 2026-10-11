@@ -54,6 +54,12 @@ export function useProfile() {
   return profile;
 }
 
+/** Browsers ignore `download` on cross-origin links, so ask Supabase Storage to send the file as an attachment. */
+export function cvDownloadUrl(url: string, filename = 'Mohamed_Wael_CV.pdf') {
+  if (!url.includes('/storage/v1/object/public/') || url.includes('download=')) return url;
+  return `${url}${url.includes('?') ? '&' : '?'}download=${encodeURIComponent(filename)}`;
+}
+
 /** Uploads a file to the `site-files` bucket under `folder/` and returns its public URL. */
 export async function uploadSiteFile(file: File, folder: 'cv' | 'images'): Promise<string> {
   const sb = requireSupabase();

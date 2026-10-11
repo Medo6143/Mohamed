@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 
 import { FaWhatsapp } from 'react-icons/fa';
-import { useProfile } from '@/lib/profileStore';
+import { useProfile, cvDownloadUrl } from '@/lib/profileStore';
 
 
 const ROLES = [
@@ -81,7 +81,7 @@ export default function Hero() {
                 [Contact Me]
               </a>
               <a
-                href={cvUrl}
+                href={cvDownloadUrl(cvUrl)}
                 download="Mohamed_Wael_CV.pdf"
                 data-testid="button-download-cv-hero"
                 className="px-6 py-3 border border-border text-secondary-foreground font-mono rounded hover:text-foreground hover:border-cyan/50 transition-colors"

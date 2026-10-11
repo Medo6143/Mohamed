@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, ArrowRight, Send, User, MessageSquare, CheckCircle, Download } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
-import { useProfile } from '@/lib/profileStore';
+import { useProfile, cvDownloadUrl } from '@/lib/profileStore';
 
 
 type FormState = 'idle' | 'sending' | 'sent';
@@ -127,7 +127,7 @@ export default function Contact() {
                 [Start Your Project] <ArrowRight size={16} />
               </a>
               <a
-                href={cvUrl}
+                href={cvDownloadUrl(cvUrl)}
                 download="Mohamed_Wael_CV.pdf"
                 data-testid="button-download-cv"
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 glass-panel border border-border text-foreground font-mono rounded hover:border-cyan/40 hover:text-cyan transition-all"

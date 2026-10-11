@@ -1,3 +1,6 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="14" fill="#0b0b14"/>
+  <rect x="1" y="1" width="62" height="62" rx="13" stroke="#00d4ff" stroke-opacity="0.35" stroke-width="2"/>
+  <text x="8" y="42" font-family="ui-monospace, SFMono-Regular, Consolas, 'Space Mono', monospace" font-size="28" font-weight="700" fill="#00d4ff" letter-spacing="-1">MW</text>
+  <rect x="47" y="38" width="10" height="4" rx="1" fill="#8b5cf6"/>
 </svg>
