@@ -2,17 +2,13 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, ArrowRight, Send, User, MessageSquare, CheckCircle, Download } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useProfile } from '@/lib/profileStore';
 
-const PROFILE_KEY = 'mw_admin_profile';
-function getCvUrl() {
-  try { const r = localStorage.getItem(PROFILE_KEY); return r ? (JSON.parse(r).cvUrl || '/Mohamed_Wael_CV.pdf') : '/Mohamed_Wael_CV.pdf'; }
-  catch { return '/Mohamed_Wael_CV.pdf'; }
-}
 
 type FormState = 'idle' | 'sending' | 'sent';
 
 export default function Contact() {
-  const [cvUrl] = useState(getCvUrl);
+  const { cvUrl } = useProfile();
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [formState, setFormState] = useState<FormState>('idle');
   const [errors, setErrors] = useState<Partial<typeof form>>({});

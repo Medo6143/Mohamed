@@ -24,7 +24,7 @@ export default function About() {
                 I lead AxonDev/DevWave — a small dev team — and I'm deeply interested in AI-powered products, Arabic RTL design, and developer tooling. I also build AI automation workflows using n8n, integrating tools like Gmail, Notion, WhatsApp Cloud API, and OpenRouter into real-world pipelines.
               </p>
               <p>
-                Currently seeking remote opportunities in Egypt, Gulf, and internationally.
+                Currently working as a Full-Stack Developer at Tharwah, building products for the Saudi market.
               </p>
             </div>
 

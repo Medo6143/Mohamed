@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Pencil, Trash2, ExternalLink, Github, ArrowLeft, Save, X, Lock,
   RotateCcw, Star, StarOff, BarChart2, Users, Eye, TrendingUp,
-  Upload, FileText, Image, User, FolderOpen, RefreshCw, Mail, Clock,
+  Upload, FileText, Image, User, FolderOpen, RefreshCw, Mail, Clock, LogOut, Database,
 } from 'lucide-react';
-import { useProjects, ADMIN_PASSWORD, type Project } from '@/lib/projectsStore';
+import type { Session } from '@supabase/supabase-js';
+import { useProjects, uploadProjectImage, type Project } from '@/lib/projectsStore';
+import { getSupabase, isSupabaseConfigured } from '@/lib/supabaseClient';
+import { fetchProfile, saveProfile, uploadSiteFile, listSiteFiles, DEFAULT_PROFILE, type Profile, type SiteFile } from '@/lib/profileStore';
 
 /* ─── Types ─────────────────────────────────────────────── */
 type Tab = 'analytics' | 'projects' | 'profile' | 'files' | 'messages';
@@ -31,40 +34,24 @@ function slugify(title: string) {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || Date.now().toString();
 }
 
-/* ─── Profile helpers (localStorage) ───────────────────── */
-const PROFILE_KEY = 'mw_admin_profile';
-type Profile = { name: string; title: string; bio: string; avatarUrl: string; cvUrl: string; cvName: string };
-const DEFAULT_PROFILE: Profile = { name: 'Mohamed Wael', title: 'Frontend & Full-Stack Developer', bio: '', avatarUrl: '', cvUrl: '/Mohamed_Wael_CV.pdf', cvName: 'Mohamed_Wael_CV.pdf' };
-
-function loadProfile(): Profile {
-  try { const r = localStorage.getItem(PROFILE_KEY); return r ? JSON.parse(r) : DEFAULT_PROFILE; } catch { return DEFAULT_PROFILE; }
-}
-function saveProfile(p: Profile) { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
-
-/* ─── Upload helper ─────────────────────────────────────── */
-async function uploadFile(file: File, endpoint: string, field: string): Promise<{ url: string; name?: string }> {
-  const fd = new FormData();
-  fd.append(field, file);
-  const res = await fetch(endpoint, { method: 'POST', body: fd });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<{ url: string; name?: string }>;
-}
-
 /* ─── Main component ─────────────────────────────────────── */
 export default function Admin() {
   const [, setLocation] = useLocation();
-  const [authed, setAuthed] = useState(false);
-  const [pw, setPw] = useState('');
-  const [pwError, setPwError] = useState('');
-  const [tab, setTab] = useState<Tab>('analytics');
+  const [session, setSession] = useState<Session | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [tab, setTab] = useState<Tab>('projects');
 
-  if (!authed) {
-    return <LoginScreen pw={pw} setPw={setPw} error={pwError} onSubmit={(e) => {
-      e.preventDefault();
-      if (pw === ADMIN_PASSWORD) { setAuthed(true); setPwError(''); }
-      else setPwError('Incorrect password');
-    }} onBack={() => setLocation('/')} />;
-  }
+  useEffect(() => {
+    const sb = getSupabase();
+    if (!sb) { setChecking(false); return; }
+    sb.auth.getSession().then(({ data }) => { setSession(data.session); setChecking(false); });
+    const { data: sub } = sb.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  if (!isSupabaseConfigured) return <SetupNotice onBack={() => setLocation('/')} />;
+  if (checking) return <div className="min-h-screen bg-background" />;
+  if (!session) return <LoginScreen onBack={() => setLocation('/')} />;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -76,6 +63,7 @@ export default function Admin() {
         <span className="text-border">|</span>
         <span className="text-xs font-mono font-bold text-cyan">Admin Panel</span>
         <div className="flex-1" />
+        <span className="hidden md:inline text-[10px] font-mono text-muted-foreground">{session.user.email}</span>
         <nav className="flex gap-1">
           {([
             ['analytics', BarChart2, 'Analytics'],
@@ -89,6 +77,10 @@ export default function Admin() {
               <Icon size={12} /> {label}
             </button>
           ))}
+          <button onClick={() => void getSupabase()?.auth.signOut()} title="Sign out"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono text-muted-foreground hover:text-red-400 transition-all">
+            <LogOut size={12} />
+          </button>
         </nav>
       </div>
 
@@ -106,10 +98,22 @@ export default function Admin() {
 }
 
 /* ─── Login Screen ────────────────────────────────────────── */
-function LoginScreen({ pw, setPw, error, onSubmit, onBack }: {
-  pw: string; setPw: (v: string) => void; error: string;
-  onSubmit: (e: React.FormEvent) => void; onBack: () => void;
-}) {
+function LoginScreen({ onBack }: { onBack: () => void }) {
+  const [email, setEmail] = useState('');
+  const [pw, setPw] = useState('');
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const sb = getSupabase();
+    if (!sb) return;
+    setBusy(true); setError('');
+    const { error } = await sb.auth.signInWithPassword({ email: email.trim(), password: pw });
+    setBusy(false);
+    if (error) setError(error.message);
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
@@ -118,17 +122,39 @@ function LoginScreen({ pw, setPw, error, onSubmit, onBack }: {
           <Lock size={22} className="text-cyan" />
         </div>
         <h1 className="text-2xl font-mono font-bold text-foreground mb-1">Admin Panel</h1>
-        <p className="text-sm text-muted-foreground font-mono mb-8">Enter your password to continue</p>
+        <p className="text-sm text-muted-foreground font-mono mb-8">Sign in to continue</p>
         <form onSubmit={onSubmit} className="space-y-4">
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="Email" className="form-input text-center" autoComplete="username" autoFocus required />
           <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-            placeholder="Password" className="form-input text-center" autoFocus />
+            placeholder="Password" className="form-input text-center" autoComplete="current-password" required />
           {error && <p className="text-xs text-red-400 font-mono">{error}</p>}
-          <button type="submit" className="w-full py-3 bg-cyan text-background font-mono font-bold rounded hover:bg-cyan/90 transition-colors">[Enter]</button>
+          <button type="submit" disabled={busy} className="w-full py-3 bg-cyan text-background font-mono font-bold rounded hover:bg-cyan/90 transition-colors disabled:opacity-50">
+            {busy ? '[...]' : '[Enter]'}
+          </button>
         </form>
         <button onClick={onBack} className="mt-6 text-xs text-muted-foreground font-mono hover:text-foreground transition-colors flex items-center gap-1.5 mx-auto">
           <ArrowLeft size={12} /> Back to portfolio
         </button>
       </motion.div>
+    </div>
+  );
+}
+
+function SetupNotice({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+      <div className="glass-panel border border-border rounded-2xl p-10 w-full max-w-md font-mono">
+        <Database size={22} className="text-cyan mb-4" />
+        <h1 className="text-lg font-bold mb-3">Supabase is not configured</h1>
+        <p className="text-xs text-muted-foreground leading-relaxed mb-6">
+          Set <span className="text-cyan">VITE_SUPABASE_URL</span> and <span className="text-cyan">VITE_SUPABASE_ANON_KEY</span> in
+          your <span className="text-cyan">.env</span> file (and in Vercel → Environment Variables), then restart / redeploy.
+        </p>
+        <button onClick={onBack} className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5">
+          <ArrowLeft size={12} /> Back to portfolio
+        </button>
+      </div>
     </div>
   );
 }
@@ -250,7 +276,9 @@ function TabAnalytics() {
 
 /* ─── Tab: Projects ──────────────────────────────────────── */
 function TabProjects() {
-  const { projects, addProject, updateProject, removeProject, resetToDefaults } = useProjects();
+  const { dbProjects: projects, loading, error: loadError, refresh, addProject, updateProject, removeProject, seedDefaults } = useProjects();
+  const [busy, setBusy] = useState(false);
+  const [opError, setOpError] = useState('');
   const [editing, setEditing] = useState<Project | null>(null);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState<Omit<Project, 'id'>>(EMPTY_PROJECT);
@@ -275,18 +303,25 @@ function TabProjects() {
   async function handleImageUpload(file: File) {
     setImgUploading(true);
     try {
-      const result = await uploadFile(file, '/api/uploads/image', 'image');
-      setForm(f => ({ ...f, image: result.url }));
-    } catch { alert('Image upload failed. Please try a URL instead.'); }
+      const url = await uploadProjectImage(file);
+      setForm(f => ({ ...f, image: url }));
+    } catch (e) { alert(`Image upload failed: ${(e as Error).message}`); }
     finally { setImgUploading(false); }
   }
 
-  function handleSave() {
+  async function run(op: () => Promise<void>) {
+    setBusy(true); setOpError('');
+    try { await op(); return true; }
+    catch (e) { setOpError((e as Error).message); return false; }
+    finally { setBusy(false); }
+  }
+
+  async function handleSave() {
     const techArr = techInput.split(',').map(s => s.trim()).filter(Boolean);
     const fwArr = fwInput.split(',').map(s => s.trim()).filter(Boolean);
     const data = { ...form, tech: techArr, frameworks: fwArr };
-    if (editing) updateProject(editing.id, data);
-    else addProject({ ...data, id: slugify(form.title) });
+    const ok = await run(() => editing ? updateProject(editing.id, data) : addProject({ ...data, id: slugify(form.title) }));
+    if (!ok) return;
     setSaved(true); closeForm();
     setTimeout(() => setSaved(false), 3000);
   }
@@ -307,6 +342,25 @@ function TabProjects() {
           </button>
         </div>
       </div>
+
+      {(opError || loadError) && (
+        <div className="mb-6 p-3 rounded-lg border border-red-400/30 bg-red-500/10 text-xs font-mono text-red-400">
+          {opError || `Failed to load projects: ${loadError}`}
+        </div>
+      )}
+
+      {!loading && !loadError && projects.length === 0 && (
+        <div className="mb-8 p-5 rounded-xl border border-cyan/30 bg-cyan/5 font-mono flex items-center gap-4 flex-wrap">
+          <Database size={18} className="text-cyan shrink-0" />
+          <p className="text-xs text-muted-foreground flex-1 min-w-[200px]">
+            The Supabase table is empty — the site is showing the built-in projects. Import them to start editing.
+          </p>
+          <button onClick={() => void run(seedDefaults)} disabled={busy}
+            className="px-4 py-2 bg-cyan text-background font-bold text-xs rounded hover:bg-cyan/90 disabled:opacity-50">
+            Import default projects
+          </button>
+        </div>
+      )}
 
       {/* Form */}
       <AnimatePresence>
@@ -373,7 +427,7 @@ function TabProjects() {
               </div>
             )}
             <div className="flex gap-3 mt-6">
-              <button onClick={handleSave} disabled={!form.title}
+              <button onClick={() => void handleSave()} disabled={!form.title || busy}
                 className="flex items-center gap-2 px-5 py-2.5 bg-cyan text-background font-mono font-bold text-xs rounded hover:bg-cyan/90 transition-colors disabled:opacity-50">
                 <Save size={13} /> {editing ? 'Save Changes' : 'Add Project'}
               </button>
@@ -401,10 +455,16 @@ function TabProjects() {
       <div className="glass-panel border border-border rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <span className="text-xs font-mono text-muted-foreground tracking-widest">// all projects</span>
-          <button onClick={() => { if (window.confirm('Reset to defaults?')) resetToDefaults(); }}
-            className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors">
-            <RotateCcw size={10} /> Reset
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => void refresh()}
+              className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors">
+              <RefreshCw size={10} className={loading ? 'animate-spin' : ''} /> Refresh
+            </button>
+            <button onClick={() => { if (window.confirm('Overwrite the default projects in Supabase with their original content?')) void run(seedDefaults); }}
+              className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground hover:text-foreground transition-colors">
+              <RotateCcw size={10} /> Reset defaults
+            </button>
+          </div>
         </div>
         <div className="divide-y divide-border/40">
           {projects.map(project => (
@@ -423,12 +483,12 @@ function TabProjects() {
               <div className="flex items-center gap-1 shrink-0">
                 {project.live && <a href={project.live} target="_blank" rel="noopener noreferrer" className="p-1.5 text-muted-foreground hover:text-cyan transition-colors"><ExternalLink size={12} /></a>}
                 {project.repo && <a href={project.repo} target="_blank" rel="noopener noreferrer" className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"><Github size={12} /></a>}
-                <button onClick={() => updateProject(project.id, { featured: !project.featured })} className="p-1.5 text-muted-foreground hover:text-yellow-400 transition-colors">
+                <button onClick={() => void run(() => updateProject(project.id, { featured: !project.featured }))} disabled={busy} className="p-1.5 text-muted-foreground hover:text-yellow-400 transition-colors">
                   {project.featured ? <Star size={12} className="text-yellow-400 fill-yellow-400" /> : <StarOff size={12} />}
                 </button>
                 <button onClick={() => openEdit(project)} className="p-1.5 text-muted-foreground hover:text-cyan transition-colors"><Pencil size={12} /></button>
                 {deleteConfirm === project.id
-                  ? <><button onClick={() => { removeProject(project.id); setDeleteConfirm(null); }} className="text-[10px] font-mono text-red-400 hover:text-red-300 px-2">confirm</button>
+                  ? <><button onClick={() => { void run(() => removeProject(project.id)); setDeleteConfirm(null); }} className="text-[10px] font-mono text-red-400 hover:text-red-300 px-2">confirm</button>
                     <button onClick={() => setDeleteConfirm(null)} className="text-[10px] font-mono text-muted-foreground px-1">✕</button></>
                   : <button onClick={() => setDeleteConfirm(project.id)} className="p-1.5 text-muted-foreground hover:text-red-400 transition-colors"><Trash2 size={12} /></button>}
               </div>
@@ -442,23 +502,27 @@ function TabProjects() {
 
 /* ─── Tab: Profile ────────────────────────────────────────── */
 function TabProfile() {
-  const [profile, setProfile] = useState<Profile>(loadProfile);
+  const [profile, setProfile] = useState<Profile>(DEFAULT_PROFILE);
   const [saved, setSaved] = useState(false);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
-  function save() {
-    saveProfile(profile);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+  useEffect(() => { void fetchProfile().then(setProfile); }, []);
+
+  async function save() {
+    try {
+      await saveProfile(profile);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (e) { alert(`Save failed: ${(e as Error).message}`); }
   }
 
   async function handleAvatarUpload(file: File) {
     setAvatarUploading(true);
     try {
-      const result = await uploadFile(file, '/api/uploads/image', 'image');
-      setProfile(p => ({ ...p, avatarUrl: result.url }));
-    } catch { alert('Image upload failed.'); }
+      const url = await uploadSiteFile(file, 'images');
+      setProfile(p => ({ ...p, avatarUrl: url }));
+    } catch (e) { alert(`Image upload failed: ${(e as Error).message}`); }
     finally { setAvatarUploading(false); }
   }
 
@@ -466,7 +530,7 @@ function TabProfile() {
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-lg font-mono font-bold"><span className="text-cyan">&gt;</span> Profile</h2>
-        <button onClick={save} className="flex items-center gap-2 px-4 py-2 bg-cyan text-background font-mono font-bold text-xs rounded hover:bg-cyan/90 transition-colors">
+        <button onClick={() => void save()} className="flex items-center gap-2 px-4 py-2 bg-cyan text-background font-mono font-bold text-xs rounded hover:bg-cyan/90 transition-colors">
           <Save size={12} /> {saved ? 'Saved!' : 'Save'}
         </button>
       </div>
@@ -505,7 +569,7 @@ function TabProfile() {
           </div>
         )}
         <div className="pt-2 border-t border-border text-[10px] font-mono text-muted-foreground">
-          Profile info is saved locally in your browser
+          Profile info is saved to Supabase and shown to every visitor
         </div>
       </div>
     </motion.div>
@@ -514,35 +578,31 @@ function TabProfile() {
 
 /* ─── Tab: Files ─────────────────────────────────────────── */
 function TabFiles() {
-  const [profile, setProfileState] = useState<Profile>(loadProfile);
+  const [profile, setProfileState] = useState<Profile>(DEFAULT_PROFILE);
   const [cvUploading, setCvUploading] = useState(false);
   const cvInputRef = useRef<HTMLInputElement>(null);
-  const [imgFiles, setImgFiles] = useState<Array<{ name: string; size: number }>>([]);
+  const [imgFiles, setImgFiles] = useState<SiteFile[]>([]);
   const [loadingFiles, setLoadingFiles] = useState(false);
 
   async function loadFiles() {
     setLoadingFiles(true);
-    try {
-      const res = await fetch('/api/uploads/list');
-      if (res.ok) {
-        const data = await res.json() as { files: Array<{ name: string; size: number }> };
-        setImgFiles(data.files);
-      }
-    } finally { setLoadingFiles(false); }
+    try { setImgFiles(await listSiteFiles()); }
+    catch { /* ignore */ }
+    finally { setLoadingFiles(false); }
   }
 
-  useEffect(() => { loadFiles(); }, []);
+  useEffect(() => { void fetchProfile().then(setProfileState); void loadFiles(); }, []);
 
   async function handleCvUpload(file: File) {
     setCvUploading(true);
     try {
-      const result = await uploadFile(file, '/api/uploads/cv', 'cv') as { url: string; originalName?: string };
-      const updated = { ...profile, cvUrl: result.url, cvName: result.originalName ?? file.name };
-      saveProfile(updated);
+      const url = await uploadSiteFile(file, 'cv');
+      const updated = { ...(await fetchProfile()), cvUrl: url, cvName: file.name };
+      await saveProfile(updated);
       setProfileState(updated);
-      alert(`CV uploaded! It's now live at: ${result.url}`);
-    } catch { alert('CV upload failed. Please try again.'); }
-    finally { setCvUploading(false); loadFiles(); }
+      alert('CV uploaded! The download buttons on the site now use the new file.');
+    } catch (e) { alert(`CV upload failed: ${(e as Error).message}`); }
+    finally { setCvUploading(false); void loadFiles(); }
   }
 
   const formatSize = (bytes: number) => bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(1)} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
@@ -585,7 +645,7 @@ function TabFiles() {
       <div className="glass-panel border border-border rounded-2xl overflow-hidden">
         <div className="flex items-center justify-between px-5 py-3 border-b border-border">
           <span className="text-xs font-mono text-muted-foreground tracking-widest">// uploaded files ({imgFiles.length})</span>
-          <button onClick={loadFiles} className="text-muted-foreground hover:text-foreground transition-colors">
+          <button onClick={() => void loadFiles()} className="text-muted-foreground hover:text-foreground transition-colors">
             <RefreshCw size={12} className={loadingFiles ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -601,7 +661,7 @@ function TabFiles() {
                   <p className="text-[11px] font-mono truncate">{f.name}</p>
                   <p className="text-[9px] font-mono text-muted-foreground">{formatSize(f.size)}</p>
                 </div>
-                <a href={`/api/uploads/files/${f.name}`} target="_blank" rel="noopener noreferrer"
+                <a href={f.url} target="_blank" rel="noopener noreferrer"
                   className="text-xs font-mono text-cyan hover:underline flex items-center gap-1 shrink-0">
                   <ExternalLink size={10} /> Open
                 </a>

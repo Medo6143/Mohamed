@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getSupabase } from './supabaseClient';
+import { getSupabase, isSupabaseConfigured } from './supabaseClient';
 
 export type Project = {
   id: string;
@@ -31,7 +31,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://smartclinic-two.vercel.app/',
     repo: 'https://github.com/Medo6143/smart-clinic-dashbord',
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1400&q=90&fit=crop',
+    image: '/projects/smart-clinic.webp',
     status: 'In Progress — 40%',
     category: 'SaaS',
     type: 'web',
@@ -65,7 +65,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://store-eleve.vercel.app/',
     repo: 'https://github.com/Medo6143/STORE_ELEVE',
-    image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&q=90&fit=crop',
+    image: '/projects/eleve-store.webp',
     status: '',
     category: 'E-Commerce',
     type: 'web',
@@ -82,7 +82,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Angular',
     live: 'https://resume-ai2-qbyk.vercel.app/login',
     repo: 'https://github.com/Medo6143/ResumeAi2/',
-    image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=1400&q=90&fit=crop',
+    image: '/projects/resume-ai.webp',
     status: '',
     category: 'SaaS',
     type: 'web',
@@ -99,9 +99,26 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://aqarmasr-or81.vercel.app/',
     repo: '',
-    image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1400&q=90&fit=crop',
+    image: '/projects/aqar-masr.webp',
     status: '',
     category: 'Real Estate',
+    type: 'web',
+    featured: true,
+  },
+  {
+    id: 'hulul-tech',
+    title: 'Hulul Tech — حلول تك',
+    short: 'Company Website — Saudi Market',
+    description: 'Bilingual (Arabic/English) company website for a Riyadh-based digital agency offering web, mobile, and branding services. Built with Next.js, with a free-consultation funnel, WhatsApp contact, and a contact form.',
+    fullDescription: 'Hulul Tech (حلول تك) is the company website for a Riyadh-based digital agency that builds websites, mobile apps, and brand identities for businesses in Saudi Arabia. Built with Next.js, it is fully bilingual with an Arabic RTL default and an English version, and is organized into Services, Work, Process, and About pages. The homepage walks visitors through the agency\'s three services, Saudi digital-market statistics, a five-step delivery process, and how project pricing is determined, all leading to a free-consultation call to action. Visitors can get in touch through WhatsApp, a short project-request form, or an email contact form, and the site includes a cookie-consent banner with granular preferences.',
+    tech: ['Next.js', 'React', 'Tailwind CSS', 'i18n (AR/EN)', 'RTL'],
+    frameworks: ['Next.js', 'React'],
+    primaryFramework: 'Next.js',
+    live: 'https://hulul-cw7m.vercel.app/',
+    repo: '',
+    image: '/projects/hulul-tech.webp',
+    status: '',
+    category: 'Web',
     type: 'web',
     featured: true,
   },
@@ -133,7 +150,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://chat-me-six-zeta.vercel.app/',
     repo: 'https://github.com/medo6143/ChatME',
-    image: 'https://images.unsplash.com/photo-1611746872915-64382b5c76da?w=1400&q=90&fit=crop',
+    image: '/projects/chatme.webp',
     status: '',
     category: 'App',
     type: 'web',
@@ -150,7 +167,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://ecommerce-store55.vercel.app/',
     repo: 'https://github.com/medo6143/ecommerce-store',
-    image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1400&q=90&fit=crop',
+    image: '/projects/ecommerce-store.webp',
     status: '',
     category: 'E-Commerce',
     type: 'web',
@@ -167,7 +184,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://movies-app-lilac-eta.vercel.app/',
     repo: 'https://github.com/Medo6143/Movies_app__',
-    image: 'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=1400&q=90&fit=crop',
+    image: '/projects/movies-app.webp',
     status: '',
     category: 'App',
     type: 'web',
@@ -184,7 +201,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://karame-elsham.vercel.app/',
     repo: 'https://github.com/Medo6143/Karame_ELSHAM',
-    image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=90&fit=crop',
+    image: '/projects/karame-elsham.webp',
     status: '',
     category: 'Web',
     type: 'web',
@@ -201,7 +218,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://inrerior-design.vercel.app/',
     repo: 'https://github.com/Medo6143/Inrerior_Design-',
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1400&q=90&fit=crop',
+    image: '/projects/interior-design.webp',
     status: '',
     category: 'Web',
     type: 'web',
@@ -218,7 +235,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'JavaScript',
     live: 'https://medo6143.github.io/image-search/',
     repo: 'https://github.com/medo6143/image-search',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=90&fit=crop',
+    image: '/projects/image-search.webp',
     status: '',
     category: 'App',
     type: 'web',
@@ -235,7 +252,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'JavaScript',
     live: 'https://medo6143.github.io/game_xo/',
     repo: 'https://github.com/medo6143/game_xo',
-    image: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=1400&q=90&fit=crop',
+    image: '/projects/game-xo.png',
     status: '',
     category: 'App',
     type: 'web',
@@ -252,7 +269,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://best-food-react-4060sdcuh-mohameds-projects-ea923384.vercel.app/',
     repo: 'https://github.com/medo6143/best-food',
-    image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=1400&q=90&fit=crop',
+    image: '/projects/best-food.webp',
     status: '',
     category: 'Web',
     type: 'web',
@@ -260,26 +277,24 @@ const DEFAULT_PROJECTS: Project[] = [
   },
 ];
 
-const STORAGE_KEY = 'mw_portfolio_projects_v2';
-
-function load(): Project[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Project[];
-  } catch { /* ignore */ }
-  return DEFAULT_PROJECTS;
-}
-
-function persist(projects: Project[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-}
-
-/* ── Supabase helpers (optional — only active when env vars are set) ── */
+/* ── Supabase-backed store ──
+ * Supabase is the single source of truth: the admin writes to it and the
+ * public site reads from it. DEFAULT_PROJECTS is only a fallback while
+ * Supabase isn't configured, the table is still empty, or the request fails.
+ */
 type SupabaseProject = {
   id: string; title: string; short: string; description: string;
   full_description: string; tech: string[]; frameworks: string[];
   primary_framework: string; live: string; repo: string; image: string;
   status: string; category: string; type: string; featured: boolean;
+  position?: number;
+};
+
+const FIELD_MAP: Record<keyof Project, keyof SupabaseProject> = {
+  id: 'id', title: 'title', short: 'short', description: 'description',
+  fullDescription: 'full_description', tech: 'tech', frameworks: 'frameworks',
+  primaryFramework: 'primary_framework', live: 'live', repo: 'repo', image: 'image',
+  status: 'status', category: 'category', type: 'type', featured: 'featured',
 };
 
 function toLocal(r: SupabaseProject): Project {
@@ -292,71 +307,149 @@ function toLocal(r: SupabaseProject): Project {
   };
 }
 
-function toRemote(p: Project): SupabaseProject {
-  return {
-    id: p.id, title: p.title, short: p.short, description: p.description,
-    full_description: p.fullDescription, tech: p.tech, frameworks: p.frameworks,
-    primary_framework: p.primaryFramework, live: p.live, repo: p.repo,
-    image: p.image, status: p.status, category: p.category, type: p.type, featured: p.featured,
-  };
+function toRemote(p: Partial<Project>): Partial<SupabaseProject> {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(p)) {
+    const col = FIELD_MAP[k as keyof Project];
+    if (col && v !== undefined) out[col] = v;
+  }
+  return out as Partial<SupabaseProject>;
 }
 
-async function fetchFromSupabase(): Promise<Project[] | null> {
-  const sb = getSupabase();
-  if (!sb) return null;
-  const { data, error } = await sb.from('projects').select('*').order('created_at');
-  if (error || !data || data.length === 0) return null;
-  return (data as SupabaseProject[]).map(toLocal);
-}
+const CACHE_KEY = 'mw_projects_cache_v3';
+const IMAGE_BUCKET = 'project-images';
 
-async function syncToSupabase(projects: Project[]) {
-  const sb = getSupabase();
-  if (!sb) return;
+function readCache(): Project[] | null {
   try {
-    await sb.from('projects').upsert(projects.map(toRemote), { onConflict: 'id' });
-  } catch { /* silent */ }
+    const raw = localStorage.getItem(CACHE_KEY);
+    return raw ? (JSON.parse(raw) as Project[]) : null;
+  } catch { return null; }
+}
+
+function writeCache(projects: Project[]) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(projects)); } catch { /* ignore */ }
+}
+
+/* Shared state so every useProjects() instance sees the same data */
+let dbProjects: Project[] | null = null;   // null = not loaded yet
+let loadError: string | null = null;
+let inflight: Promise<void> | null = null;
+const listeners = new Set<() => void>();
+
+function setDb(next: Project[]) {
+  dbProjects = next;
+  writeCache(next);
+  listeners.forEach(l => l());
+}
+
+function requireSupabase() {
+  const sb = getSupabase();
+  if (!sb) throw new Error('Supabase is not configured (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).');
+  return sb;
+}
+
+export function refreshProjects(): Promise<void> {
+  const sb = getSupabase();
+  if (!sb) return Promise.resolve();
+  if (inflight) return inflight;
+  inflight = (async () => {
+    const { data, error } = await sb.from('projects').select('*')
+      .order('position', { ascending: true })
+      .order('created_at', { ascending: true });
+    if (error) {
+      loadError = error.message;
+      listeners.forEach(l => l());
+      return;
+    }
+    loadError = null;
+    setDb((data as SupabaseProject[]).map(toLocal));
+  })().finally(() => { inflight = null; });
+  return inflight;
+}
+
+function uniqueId(base: string) {
+  const taken = new Set((dbProjects ?? []).map(p => p.id));
+  if (!taken.has(base)) return base;
+  let i = 2;
+  while (taken.has(`${base}-${i}`)) i++;
+  return `${base}-${i}`;
+}
+
+async function addProject(p: Project) {
+  const sb = requireSupabase();
+  const row = { ...toRemote({ ...p, id: uniqueId(p.id) }), position: dbProjects?.length ?? 0 };
+  const { data, error } = await sb.from('projects').insert(row).select().single();
+  if (error) throw new Error(error.message);
+  setDb([...(dbProjects ?? []), toLocal(data as SupabaseProject)]);
+}
+
+async function updateProject(id: string, patch: Partial<Project>) {
+  const sb = requireSupabase();
+  const { id: _ignored, ...rest } = patch;
+  const { data, error } = await sb.from('projects').update(toRemote(rest)).eq('id', id).select().single();
+  if (error) throw new Error(error.message);
+  const updated = toLocal(data as SupabaseProject);
+  setDb((dbProjects ?? []).map(x => x.id === id ? updated : x));
+}
+
+async function removeProject(id: string) {
+  const sb = requireSupabase();
+  const { error } = await sb.from('projects').delete().eq('id', id);
+  if (error) throw new Error(error.message);
+  setDb((dbProjects ?? []).filter(x => x.id !== id));
+}
+
+/** Writes the built-in DEFAULT_PROJECTS into Supabase (insert or overwrite by id). */
+async function seedDefaults() {
+  const sb = requireSupabase();
+  const rows = DEFAULT_PROJECTS.map((p, i) => ({ ...toRemote(p), position: i }));
+  const { error } = await sb.from('projects').upsert(rows, { onConflict: 'id' });
+  if (error) throw new Error(error.message);
+  await refreshProjects();
+}
+
+/** Uploads an image to the `project-images` bucket and returns its public URL. */
+export async function uploadProjectImage(file: File): Promise<string> {
+  const sb = requireSupabase();
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await sb.storage.from(IMAGE_BUCKET).upload(path, file, { contentType: file.type, upsert: false });
+  if (error) throw new Error(error.message);
+  return sb.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl;
 }
 
 /* ── Hook ── */
 export function useProjects() {
-  const [projects, setProjects] = useState<Project[]>(load);
-  const [synced, setSynced] = useState(false);
+  const [, force] = useState(0);
 
-  // On mount, try to pull from Supabase (overrides localStorage if table has data)
   useEffect(() => {
-    if (synced) return;
-    fetchFromSupabase().then(remote => {
-      if (remote && remote.length > 0) {
-        persist(remote);
-        setProjects(remote);
-      }
-      setSynced(true);
-    }).catch(() => setSynced(true));
-  }, [synced]);
-
-  const save = useCallback((updated: Project[]) => {
-    persist(updated);
-    setProjects(updated);
-    void syncToSupabase(updated);
+    const l = () => force(n => n + 1);
+    listeners.add(l);
+    if (dbProjects === null) void refreshProjects();
+    return () => { listeners.delete(l); };
   }, []);
 
-  const addProject = useCallback((p: Project) => {
-    save([...projects, p]);
-  }, [projects, save]);
+  const loading = isSupabaseConfigured && dbProjects === null && loadError === null;
 
-  const updateProject = useCallback((id: string, p: Partial<Project>) => {
-    save(projects.map(x => x.id === id ? { ...x, ...p } : x));
-  }, [projects, save]);
+  // What the public site shows: DB data if there is any, otherwise a fallback.
+  let projects: Project[];
+  if (!isSupabaseConfigured) projects = DEFAULT_PROJECTS;
+  else if (dbProjects && dbProjects.length > 0) projects = dbProjects;
+  else if (dbProjects === null && loadError === null) projects = readCache() ?? [];
+  else projects = DEFAULT_PROJECTS;
 
-  const removeProject = useCallback((id: string) => {
-    save(projects.filter(x => x.id !== id));
-  }, [projects, save]);
+  const refresh = useCallback(() => refreshProjects(), []);
 
-  const resetToDefaults = useCallback(() => {
-    save(DEFAULT_PROJECTS);
-  }, [save]);
-
-  return { projects, addProject, updateProject, removeProject, resetToDefaults };
+  return {
+    projects,
+    /** Exactly what is stored in Supabase (no fallback) — used by the admin. */
+    dbProjects: dbProjects ?? [],
+    loading,
+    error: loadError,
+    refresh,
+    addProject,
+    updateProject,
+    removeProject,
+    seedDefaults,
+  };
 }
-
-export const ADMIN_PASSWORD = 'mw2026';

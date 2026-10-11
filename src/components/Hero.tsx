@@ -3,12 +3,8 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail } from 'lucide-react';
 
 import { FaWhatsapp } from 'react-icons/fa';
+import { useProfile } from '@/lib/profileStore';
 
-const PROFILE_KEY = 'mw_admin_profile';
-function getCvUrl() {
-  try { const r = localStorage.getItem(PROFILE_KEY); return r ? (JSON.parse(r).cvUrl || '/Mohamed_Wael_CV.pdf') : '/Mohamed_Wael_CV.pdf'; }
-  catch { return '/Mohamed_Wael_CV.pdf'; }
-}
 
 const ROLES = [
   "Frontend Developer",
@@ -18,7 +14,7 @@ const ROLES = [
 ];
 
 export default function Hero() {
-  const [cvUrl] = useState(getCvUrl);
+  const { cvUrl } = useProfile();
   const [roleText, setRoleText] = useState("");
   const [roleIndex, setRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);

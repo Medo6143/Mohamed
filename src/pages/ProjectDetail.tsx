@@ -19,9 +19,11 @@ const fwColors: Record<string, string> = {
 
 export default function ProjectDetail({ params }: { params: { id: string } }) {
   const [, setLocation] = useLocation();
-  const { projects } = useProjects();
+  const { projects, loading } = useProjects();
   const project = projects.find(p => p.id === params.id);
   useEffect(() => { if (project) trackProjectView(project.id); }, [project?.id]);
+
+  if (!project && loading) return <div className="min-h-screen bg-background" />;
 
   if (!project) {
     return (

@@ -3,6 +3,30 @@ import { Briefcase, Calendar } from 'lucide-react';
 
 const experiences = [
   {
+    role: "Full-Stack Developer",
+    company: "Tharwah",
+    period: "Sep 2026 – Present",
+    type: "Remote",
+    quote: "Building full-stack products for the Saudi market.",
+    bullets: [
+      "Full-stack development on Tharwah's products for the Saudi market",
+      "Working remotely with the engineering team across frontend and backend",
+    ],
+    tags: [],
+  },
+  {
+    role: "Full-Stack Developer",
+    company: "Kowa",
+    period: "Jun 2026 – Sep 2026",
+    type: "On-site",
+    quote: "Full-stack delivery for a company serving the Saudi market.",
+    bullets: [
+      "Full-stack development on products for the Saudi market",
+      "Worked on-site with the team across frontend and backend",
+    ],
+    tags: [],
+  },
+  {
     role: "Frontend Engineer",
     company: "Huma-volove",
     period: "Jan 2026 – Mar 2026",
@@ -63,6 +87,8 @@ const experiences = [
 
 const typeColors: Record<string, string> = {
   'Full-Time': 'bg-cyan/10 border-cyan/30 text-cyan',
+  'Remote': 'bg-cyan/10 border-cyan/30 text-cyan',
+  'On-site': 'bg-blue-500/10 border-blue-400/30 text-blue-400',
   'Freelance': 'bg-violet/10 border-violet/30 text-violet',
   'Remote Internship': 'bg-emerald-500/10 border-emerald-400/30 text-emerald-400',
   'Internship': 'bg-amber-500/10 border-amber-400/30 text-amber-400',

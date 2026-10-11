@@ -31,10 +31,17 @@ Open http://localhost:3000
    - **Root Directory**: `.` (root of this folder)
 4. Deploy ✅
 
-## Optional: Supabase (Cloud Data Sync)
+## Supabase (projects + admin)
 
-Copy `.env.example` to `.env` and fill in your Supabase credentials.
-This lets project data sync across all browsers instead of using localStorage.
+Projects are stored in Supabase; the admin panel writes to it and the site reads from it.
+
+1. Create a project on supabase.com.
+2. SQL Editor → run [`supabase/schema.sql`](supabase/schema.sql) (table, image bucket, security rules).
+3. Authentication → Users → **Add user** (your admin email + password).
+4. Authentication → Sign In / Providers → turn **off** "Allow new users to sign up".
+5. Copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`
+   (Project Settings → API). Add the same two variables in Vercel.
+6. Open `/admin`, sign in, and click **Import default projects** once.
 
 ## Stack
 
@@ -44,8 +51,8 @@ This lets project data sync across all browsers instead of using localStorage.
 - Framer Motion
 - Radix UI / shadcn
 - Wouter (routing)
-- Supabase (optional)
+- Supabase (database, auth, storage)
 
 ## Admin Panel
 
-Visit `/admin` — password: `mw2026`
+Visit `/admin` and sign in with the Supabase user you created.
