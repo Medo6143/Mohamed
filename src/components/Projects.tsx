@@ -178,10 +178,10 @@ function BigCard({ project, onClick }: { project: Project; onClick: () => void }
       style={{ background: '#0d0d14' }}
     >
       <img src={project.image} alt={project.title}
-        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 transition-opacity duration-500 group-hover:scale-105 transform"
+        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-105 transform"
         loading="lazy" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0d0d14]/60 via-transparent to-[#0d0d14]/80" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0d0d14]/60 via-transparent to-[#0d0d14]/80 group-hover:opacity-0 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/40 to-transparent group-hover:opacity-0 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan/60 to-transparent" />
 
       {/* Hover arrow */}
@@ -191,7 +191,7 @@ function BigCard({ project, onClick }: { project: Project; onClick: () => void }
         </div>
       </div>
 
-      <div className="relative z-10 p-7 flex flex-col h-full min-h-[340px]">
+      <div className="relative z-10 p-7 flex flex-col h-full group-hover:opacity-0 transition-opacity duration-300 min-h-[340px]">
         <div className="flex items-start justify-between gap-3 mb-auto">
           <div className="flex flex-wrap gap-1.5">
             <FwBadge name={project.primaryFramework} />
@@ -260,9 +260,9 @@ function TallCard({ project, onClick }: { project: Project; onClick: () => void 
       className="relative rounded-2xl overflow-hidden group h-full min-h-[340px] border border-border hover:border-cyan/50 transition-all duration-300 cursor-pointer"
       style={{ background: '#0d0d14' }}>
       <img src={project.image} alt={project.title}
-        className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-60 transition-opacity duration-500 group-hover:scale-105 transform"
+        className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-105 transform"
         loading="lazy" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/50 to-[#0d0d14]/20" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/50 to-[#0d0d14]/20 group-hover:opacity-0 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet/60 to-transparent" />
 
       <div className="absolute top-5 right-5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
@@ -271,7 +271,7 @@ function TallCard({ project, onClick }: { project: Project; onClick: () => void 
         </div>
       </div>
 
-      <div className="relative z-10 p-6 flex flex-col h-full min-h-[340px]">
+      <div className="relative z-10 p-6 flex flex-col h-full group-hover:opacity-0 transition-opacity duration-300 min-h-[340px]">
         <div className="flex flex-wrap gap-1.5 mb-auto">
           <FwBadge name={project.primaryFramework} />
           {project.type === 'mobile' && (
@@ -325,9 +325,9 @@ function NormalCard({ project, onClick }: { project: Project; onClick: () => voi
       className="relative rounded-2xl overflow-hidden group h-56 border border-border hover:border-cyan/50 transition-all duration-300 cursor-pointer"
       style={{ background: '#0d0d14' }}>
       <img src={project.image} alt={project.title}
-        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 transition-opacity duration-500 group-hover:scale-105 transform"
+        className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-105 transform"
         loading="lazy" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/60 to-[#0d0d14]/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/60 to-[#0d0d14]/10 group-hover:opacity-0 transition-opacity duration-500" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan/40 to-transparent" />
 
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
@@ -336,7 +336,7 @@ function NormalCard({ project, onClick }: { project: Project; onClick: () => voi
         </div>
       </div>
 
-      <div className="relative z-10 p-5 flex flex-col h-full">
+      <div className="relative z-10 p-5 flex flex-col h-full group-hover:opacity-0 transition-opacity duration-300">
         <div className="flex flex-wrap gap-1.5 mb-auto"><FwBadge name={project.primaryFramework} /></div>
         <div>
           <h3 className="text-lg font-mono font-bold text-foreground mb-0.5">{project.title}</h3>
@@ -381,9 +381,9 @@ function SmallCard({ project, index, onClick }: { project: Project; index: numbe
       style={{ background: '#0d0d14' }}
     >
       <img src={project.image} alt={project.title}
-        className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300"
+        className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-100 transition-opacity duration-300"
         loading="lazy" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/70 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d14] via-[#0d0d14]/70 to-transparent group-hover:opacity-0 transition-opacity duration-500" />
 
       <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="w-5 h-5 rounded-full bg-cyan/20 border border-cyan/40 flex items-center justify-center">
@@ -391,7 +391,7 @@ function SmallCard({ project, index, onClick }: { project: Project; index: numbe
         </div>
       </div>
 
-      <div className="relative z-10 p-4 flex flex-col h-full">
+      <div className="relative z-10 p-4 flex flex-col h-full group-hover:opacity-0 transition-opacity duration-300">
         <FwBadge name={project.primaryFramework} />
         <div className="mt-auto">
           <h4 className="text-sm font-bold font-mono text-foreground mb-1">{project.title}</h4>
