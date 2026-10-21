@@ -387,16 +387,18 @@ export function refreshProjects(): Promise<void> {
   if (!sb) return Promise.resolve();
   if (inflight) return inflight;
   inflight = (async () => {
-    const { data, error } = await sb.from('projects').select('*')
-      .order('position', { ascending: true })
-      .order('created_at', { ascending: true });
-    if (error) {
-      loadError = error.message;
+    try {
+      const { data, error } = await sb.from('projects').select('*')
+        .order('position', { ascending: true })
+        .order('created_at', { ascending: true });
+      if (error) throw new Error(error.message);
+      loadError = null;
+      setDb((data as SupabaseProject[]).map(toLocal));
+    } catch (e) {
+      // Network failure (offline, DNS, blocked) — fall back instead of loading forever
+      loadError = e instanceof Error ? e.message : String(e);
       listeners.forEach(l => l());
-      return;
     }
-    loadError = null;
-    setDb((data as SupabaseProject[]).map(toLocal));
   })().finally(() => { inflight = null; });
   return inflight;
 }
@@ -469,7 +471,7 @@ export function useProjects() {
   let projects: Project[];
   if (!isSupabaseConfigured) projects = DEFAULT_PROJECTS;
   else if (dbProjects && dbProjects.length > 0) projects = dbProjects;
-  else if (dbProjects === null && loadError === null) projects = readCache() ?? [];
+  else if (dbProjects === null && loadError === null) projects = readCache() ?? DEFAULT_PROJECTS;
   else projects = DEFAULT_PROJECTS;
 
   const refresh = useCallback(() => refreshProjects(), []);

@@ -20,6 +20,7 @@ import Footer from "@/components/Footer";
 // Pages
 import ProjectDetail from "@/pages/ProjectDetail";
 import Admin from "@/pages/Admin";
+import NotFound from "@/pages/not-found";
 import { trackPageView } from "@/lib/analytics";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/" component={Portfolio} />
       <Route path="/project/:id" component={ProjectDetail} />
       <Route path="/admin" component={Admin} />
+      <Route component={NotFound} />
     </Switch>
   );
 }
