@@ -24,11 +24,11 @@ type Stats = {
 const EMPTY_PROJECT: Omit<Project, 'id'> = {
   title: '', short: '', description: '', fullDescription: '',
   tech: [], frameworks: [], primaryFramework: '',
-  live: '', repo: '', image: '', status: '',
+  live: '', repo: '', backendRepo: '', image: '', status: '',
   category: 'Web', type: 'web', featured: false,
 };
 const CATEGORIES = ['SaaS', 'E-Commerce', 'Real Estate', 'Mobile', 'App', 'Web'];
-const FRAMEWORK_OPTIONS = ['React', 'Next.js', 'Angular', 'React Native', 'TypeScript', 'Redux', 'Firebase', 'Expo', 'JavaScript', 'Node.js', 'Vue'];
+const FRAMEWORK_OPTIONS = ['React', 'Next.js', 'Angular', 'React Native', 'Flutter', '.NET', 'Blazor', 'TypeScript', 'Redux', 'Firebase', 'Expo', 'JavaScript', 'Node.js', 'Vue'];
 
 function slugify(title: string) {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || Date.now().toString();
@@ -396,6 +396,7 @@ function TabProjects() {
               <Field label="Frameworks / filter tags (comma-separated)"><input className="form-input" value={fwInput} onChange={e => setFwInput(e.target.value)} placeholder="React, Next.js, ..." /></Field>
               <Field label="Live URL"><input className="form-input" value={form.live} onChange={e => setForm(f => ({ ...f, live: e.target.value }))} placeholder="https://..." /></Field>
               <Field label="GitHub Repo URL"><input className="form-input" value={form.repo} onChange={e => setForm(f => ({ ...f, repo: e.target.value }))} placeholder="https://github.com/..." /></Field>
+              <Field label="Backend Repo URL (optional)"><input className="form-input" value={form.backendRepo} onChange={e => setForm(f => ({ ...f, backendRepo: e.target.value }))} placeholder="https://github.com/..." /></Field>
               <Field label="Category">
                 <select className="form-input" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
                   {CATEGORIES.map(c => <option key={c}>{c}</option>)}

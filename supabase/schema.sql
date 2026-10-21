@@ -13,6 +13,7 @@ create table if not exists public.projects (
   primary_framework text not null default '',
   live              text not null default '',
   repo              text not null default '',
+  backend_repo      text not null default '',
   image             text not null default '',
   status            text not null default '',
   category          text not null default 'Web',
@@ -24,6 +25,7 @@ create table if not exists public.projects (
 
 -- In case the table already existed from an older version
 alter table public.projects add column if not exists position integer not null default 0;
+alter table public.projects add column if not exists backend_repo text not null default '';
 
 alter table public.projects enable row level security;
 

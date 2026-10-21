@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink, Github, Smartphone, Star, ArrowRight } from 'lucide-react';
 import { useProjects, type Project } from '@/lib/projectsStore';
 
-const FRAMEWORKS = ['All', 'React', 'Next.js', 'Angular', 'React Native', 'TypeScript', 'Redux', 'Firebase', 'Expo', 'JavaScript'];
+const FRAMEWORKS = ['All', 'React', 'Next.js', 'Angular', 'React Native', 'Flutter', '.NET', 'TypeScript', 'Redux', 'Firebase', 'Expo', 'JavaScript'];
 
 const fwColors: Record<string, string> = {
   'Next.js': 'bg-white/10 border-white/30 text-white',
@@ -233,7 +233,13 @@ function BigCard({ project, onClick }: { project: Project; onClick: () => void }
           {project.repo && (
             <a href={project.repo} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors">
-              <Github size={13} /> Source Code
+              <Github size={13} /> {project.backendRepo ? 'App Code' : 'Source Code'}
+            </a>
+          )}
+          {project.backendRepo && (
+            <a href={project.backendRepo} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors">
+              <Github size={13} /> Backend
             </a>
           )}
           {!project.live && !project.repo && (
@@ -292,7 +298,12 @@ function TallCard({ project, onClick }: { project: Project; onClick: () => void 
             )}
             {project.repo && (
               <a href={project.repo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors">
-                <Github size={11} /> Repo
+                <Github size={11} /> {project.backendRepo ? 'App' : 'Repo'}
+              </a>
+            )}
+            {project.backendRepo && (
+              <a href={project.backendRepo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors">
+                <Github size={11} /> Backend
               </a>
             )}
             {!project.live && !project.repo && (

@@ -12,6 +12,7 @@ export type Project = {
   primaryFramework: string;
   live: string;
   repo: string;
+  backendRepo: string;
   image: string;
   status: string;
   category: string;
@@ -20,6 +21,24 @@ export type Project = {
 };
 
 const DEFAULT_PROJECTS: Project[] = [
+  {
+    id: 'stockly',
+    title: 'Stockly — ستوكلي',
+    short: 'AI Inventory App for Small Shops',
+    description: 'Flutter app for pharmacies & grocery stores in Egypt: snap a supplier invoice and AI extracts items, quantities and prices, matches them to your products and updates stock. Barcode quick-sale, offline-first sync, Arabic/English RTL, Paymob subscriptions, .NET 10 backend with Blazor admin panel.',
+    fullDescription: 'Stockly (ستوكلي) is an AI-powered inventory management app built for small shops in Egypt — pharmacies and grocery stores. The shop owner photographs a supplier invoice; the backend sends it to an LLM via OpenRouter which extracts the supplier, invoice number, line items, quantities and prices, validates the total (a difference above 2% raises a warning) and fuzzy-matches each line to the shop\'s products in Arabic and English with a confidence score. One confirmation updates stock, and the system remembers supplier naming for next time. Quick sale scans barcodes with the camera or a USB/Bluetooth reader and decrements stock instantly. The app is offline-first: invoices and sales are stored locally with Drift and synced without duplicates when the connection returns. It supports multiple units per product (strip / box / carton), a full stock-movement ledger, a summary dashboard with low-stock, negative-stock, expiring items and today\'s sales, full RTL Arabic and English, light and dark themes, and subscription plans paid by card, Vodafone Cash or kiosk through Paymob. The mobile app uses Flutter with Riverpod, go_router, Dio, Drift and freezed. The backend is .NET 10 with EF Core, MediatR, Identity + JWT, Hangfire and Polly on PostgreSQL 16, Redis 7 and MinIO, plus a Blazor admin panel for managing shops, plans, scan limits, AI cost and payments. 1,918 backend tests and 1,427 mobile tests with 97% logic coverage.',
+    tech: ['Flutter', 'Riverpod', 'Drift', '.NET 10', 'EF Core', 'PostgreSQL', 'Redis', 'MinIO', 'OpenRouter LLM', 'Paymob', 'Blazor', 'Hangfire'],
+    frameworks: ['Flutter', '.NET', 'Blazor'],
+    primaryFramework: 'Flutter',
+    live: 'https://stockly-site.vercel.app/',
+    repo: 'https://github.com/Medo6143/STOCKLY_MOBILE',
+    backendRepo: 'https://github.com/Medo6143/STPOCKLY_BACKEND',
+    image: '/projects/stockly.webp',
+    status: '',
+    category: 'Mobile',
+    type: 'mobile',
+    featured: true,
+  },
   {
     id: 'smart-clinic',
     title: 'Smart Clinic',
@@ -31,6 +50,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://smartclinic-two.vercel.app/',
     repo: 'https://github.com/Medo6143/smart-clinic-dashbord',
+    backendRepo: '',
     image: '/projects/smart-clinic.webp',
     status: 'In Progress — 40%',
     category: 'SaaS',
@@ -48,6 +68,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React Native',
     live: '',
     repo: '',
+    backendRepo: '',
     image: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?w=1400&q=90&fit=crop',
     status: '',
     category: 'Mobile',
@@ -65,6 +86,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://store-eleve.vercel.app/',
     repo: 'https://github.com/Medo6143/STORE_ELEVE',
+    backendRepo: '',
     image: '/projects/eleve-store.webp',
     status: '',
     category: 'E-Commerce',
@@ -82,6 +104,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Angular',
     live: 'https://resume-ai2-qbyk.vercel.app/login',
     repo: 'https://github.com/Medo6143/ResumeAi2/',
+    backendRepo: '',
     image: '/projects/resume-ai.webp',
     status: '',
     category: 'SaaS',
@@ -99,6 +122,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://aqarmasr-or81.vercel.app/',
     repo: '',
+    backendRepo: '',
     image: '/projects/aqar-masr.webp',
     status: '',
     category: 'Real Estate',
@@ -116,6 +140,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'Next.js',
     live: 'https://hulul-cw7m.vercel.app/',
     repo: '',
+    backendRepo: '',
     image: '/projects/hulul-tech.webp',
     status: '',
     category: 'Web',
@@ -133,6 +158,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://amazon-clone-seven-opal.vercel.app/',
     repo: 'https://github.com/Medo6143/Amazon_Clone',
+    backendRepo: '',
     image: 'https://images.unsplash.com/photo-1523474253046-8cd2748b5fd2?w=1400&q=90&fit=crop',
     status: '',
     category: 'E-Commerce',
@@ -150,6 +176,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://chat-me-six-zeta.vercel.app/',
     repo: 'https://github.com/medo6143/ChatME',
+    backendRepo: '',
     image: '/projects/chatme.webp',
     status: '',
     category: 'App',
@@ -167,6 +194,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://ecommerce-store55.vercel.app/',
     repo: 'https://github.com/medo6143/ecommerce-store',
+    backendRepo: '',
     image: '/projects/ecommerce-store.webp',
     status: '',
     category: 'E-Commerce',
@@ -184,6 +212,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://movies-app-lilac-eta.vercel.app/',
     repo: 'https://github.com/Medo6143/Movies_app__',
+    backendRepo: '',
     image: '/projects/movies-app.webp',
     status: '',
     category: 'App',
@@ -201,6 +230,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://karame-elsham.vercel.app/',
     repo: 'https://github.com/Medo6143/Karame_ELSHAM',
+    backendRepo: '',
     image: '/projects/karame-elsham.webp',
     status: '',
     category: 'Web',
@@ -218,6 +248,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://inrerior-design.vercel.app/',
     repo: 'https://github.com/Medo6143/Inrerior_Design-',
+    backendRepo: '',
     image: '/projects/interior-design.webp',
     status: '',
     category: 'Web',
@@ -235,6 +266,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'JavaScript',
     live: 'https://medo6143.github.io/image-search/',
     repo: 'https://github.com/medo6143/image-search',
+    backendRepo: '',
     image: '/projects/image-search.webp',
     status: '',
     category: 'App',
@@ -252,6 +284,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'JavaScript',
     live: 'https://medo6143.github.io/game_xo/',
     repo: 'https://github.com/medo6143/game_xo',
+    backendRepo: '',
     image: '/projects/game-xo.png',
     status: '',
     category: 'App',
@@ -269,6 +302,7 @@ const DEFAULT_PROJECTS: Project[] = [
     primaryFramework: 'React',
     live: 'https://best-food-react-4060sdcuh-mohameds-projects-ea923384.vercel.app/',
     repo: 'https://github.com/medo6143/best-food',
+    backendRepo: '',
     image: '/projects/best-food.webp',
     status: '',
     category: 'Web',
@@ -285,7 +319,7 @@ const DEFAULT_PROJECTS: Project[] = [
 type SupabaseProject = {
   id: string; title: string; short: string; description: string;
   full_description: string; tech: string[]; frameworks: string[];
-  primary_framework: string; live: string; repo: string; image: string;
+  primary_framework: string; live: string; repo: string; backend_repo?: string | null; image: string;
   status: string; category: string; type: string; featured: boolean;
   position?: number;
 };
@@ -293,7 +327,7 @@ type SupabaseProject = {
 const FIELD_MAP: Record<keyof Project, keyof SupabaseProject> = {
   id: 'id', title: 'title', short: 'short', description: 'description',
   fullDescription: 'full_description', tech: 'tech', frameworks: 'frameworks',
-  primaryFramework: 'primary_framework', live: 'live', repo: 'repo', image: 'image',
+  primaryFramework: 'primary_framework', live: 'live', repo: 'repo', backendRepo: 'backend_repo', image: 'image',
   status: 'status', category: 'category', type: 'type', featured: 'featured',
 };
 
@@ -301,7 +335,7 @@ function toLocal(r: SupabaseProject): Project {
   return {
     id: r.id, title: r.title, short: r.short ?? '', description: r.description ?? '',
     fullDescription: r.full_description ?? '', tech: r.tech ?? [], frameworks: r.frameworks ?? [],
-    primaryFramework: r.primary_framework ?? '', live: r.live ?? '', repo: r.repo ?? '',
+    primaryFramework: r.primary_framework ?? '', live: r.live ?? '', repo: r.repo ?? '', backendRepo: r.backend_repo ?? '',
     image: r.image ?? '', status: r.status ?? '', category: r.category ?? 'Web',
     type: (r.type as 'web' | 'mobile') ?? 'web', featured: r.featured ?? false,
   };

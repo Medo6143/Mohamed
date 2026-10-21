@@ -117,7 +117,18 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                 data-testid="btn-detail-repo"
                 className="flex items-center gap-2 px-6 py-3 glass-panel border border-border text-foreground font-mono rounded hover:border-cyan/40 hover:text-cyan transition-all text-sm"
               >
-                <Github size={15} /> Source Code
+                <Github size={15} /> {project.backendRepo ? 'App Code' : 'Source Code'}
+              </a>
+            )}
+            {project.backendRepo && (
+              <a
+                href={project.backendRepo}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="btn-detail-backend-repo"
+                className="flex items-center gap-2 px-6 py-3 glass-panel border border-border text-foreground font-mono rounded hover:border-cyan/40 hover:text-cyan transition-all text-sm"
+              >
+                <Github size={15} /> Backend Code
               </a>
             )}
           </div>
@@ -174,7 +185,13 @@ export default function ProjectDetail({ params }: { params: { id: string } }) {
                   {project.repo && (
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">GitHub</span>
-                      <a href={project.repo} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline truncate ml-2">Repo</a>
+                      <a href={project.repo} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline truncate ml-2">{project.backendRepo ? 'App Repo' : 'Repo'}</a>
+                    </div>
+                  )}
+                  {project.backendRepo && (
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Backend</span>
+                      <a href={project.backendRepo} target="_blank" rel="noopener noreferrer" className="text-cyan hover:underline truncate ml-2">Repo</a>
                     </div>
                   )}
                 </div>
