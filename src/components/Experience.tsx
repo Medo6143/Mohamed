@@ -17,7 +17,7 @@ const experiences = [
   {
     role: "Full-Stack Developer",
     company: "Kowa",
-    period: "Jun 2026 – Sep 2026",
+    period: "Jun 2026 – Oct 2026",
     type: "On-site",
     quote: "Full-stack delivery for a company serving the Saudi market.",
     bullets: [
@@ -29,7 +29,7 @@ const experiences = [
   {
     role: "Frontend Engineer",
     company: "Huma-volove",
-    period: "Jan 2026 – Mar 2026",
+    period: "Jan 2025 – Jan 2026",
     type: "Full-Time",
     quote: "Where production systems met performance engineering.",
     bullets: [
